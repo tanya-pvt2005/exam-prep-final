@@ -5,11 +5,32 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+
+// User model to store user credentials
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  topics    Topic[] // A user can have multiple topics
+  createdAt DateTime @default(now())
+}
+
+// Topic model to store study topics
+model Topic {
+  id        Int      @id @default(autoincrement())
+  title     String
+  notes     String?
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
