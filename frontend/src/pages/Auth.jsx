@@ -66,7 +66,7 @@ const Auth = () => {
         </h1>
 
         {/* Tabs */}
-        <div className="flex bg-gray-700/30 rounded-xl p-1 shadow-inner mb-6">
+        <div className="flex bg-gray-700/30 rounded-xl gap-5 p-1 shadow-inner mb-6">
           {["login", "register", "admin"].map((tab) => (
             <button
               key={tab}

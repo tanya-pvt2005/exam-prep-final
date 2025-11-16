@@ -49,9 +49,8 @@ export default function App() {
   };
   return (
     <div
-      className="appWrapper min-h-screen flex flex-col bg-gray-900" style={{ position: "relative", width: "100%", height: "100vh" }}
+      className="min-h-screen flex flex-col bg-gray-900" 
     >
-       <ParticlesBg config={cobwebConfig} type="custom" bg={true} />
         <MouseParticles g={10} v = {0.7} radius ={10} alpha = {0.4} color="random" cull="col,image-wrapper"/>
        
       <Navbar />
