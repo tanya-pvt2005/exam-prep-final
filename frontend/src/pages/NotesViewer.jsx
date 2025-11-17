@@ -1,17 +1,31 @@
 import { Link, useParams } from "react-router-dom";
 import { FiArrowLeft, FiBookOpen, FiStar } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function NotesViewer() {
   const { id } = useParams();
+  const [note, setNote] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const note = {
-    title: `Sample Note ${id}`,
-    content: `This is the content of the note. Replace this with real content from your backend.
+  // Fetch note from backend
+  useEffect(() => {
+    async function fetchNote() {
+      try {
+        const res = await axios.get(`/api/notes/${id}`);
+        setNote(res.data);
+      } catch (err) {
+        console.error("Error loading note:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-You can add paragraphs, headings, or even paste text.
+    fetchNote();
+  }, [id]);
 
-This layout adjusts beautifully with clean glass effects & readable typography.`,
-  };
+  if (loading) return <p className="text-gray-400 p-6">Loading...</p>;
+  if (!note) return <p className="text-gray-400 p-6">Note not found</p>;
 
   return (
     <div className="w-full min-h-screen p-6 bg-gray-900 text-gray-100 flex flex-col gap-6">
@@ -59,10 +73,20 @@ This layout adjusts beautifully with clean glass effects & readable typography.`
             </p>
           </div>
           <button
-            className="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md hover:shadow-lg transition-transform transform hover:scale-105 cursor-pointer"
-          >
-            Generate Summary ✨
-          </button>
+  onClick={async () => {
+    try {
+      const res = await axios.post(`/api/notes/${id}/summary`);
+      alert("AI Summary:\n\n" + res.data.summary);
+    } catch (err) {
+      console.error(err);
+      alert("Summary failed. Check console.");
+    }
+  }}
+  className="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md hover:shadow-lg transition-transform transform hover:scale-105 cursor-pointer"
+>
+  Generate Summary ✨
+</button>
+
         </div>
 
       </div>

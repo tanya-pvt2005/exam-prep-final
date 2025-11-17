@@ -83,3 +83,4 @@ export default function App() {
 
   );
 }
+<Route path="/admin/manage-notes" element={<ManageNotes />} />

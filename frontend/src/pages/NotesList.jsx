@@ -1,27 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
+import axios from "axios";
 
 export default function NotesList() {
   const [query, setQuery] = useState("");
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // SAMPLE notes
-  const sampleNotes = [
-    { id: 1, title: "Introduction to Networking", desc: "Basics of OSI model, TCP/IP, packets & routing." },
-    { id: 2, title: "Database Normalization", desc: "1NF, 2NF, 3NF and BCNF explained simply." },
-    { id: 3, title: "Operating Systems", desc: "Processes, threads, scheduling algorithms." },
-    { id: 4, title: "WebSockets", desc: "Real-time communication basics." },
-  ];
+  // Fetch notes from backend
+  useEffect(() => {
+    async function fetchNotes() {
+      try {
+        const res = await axios.get("/api/notes");  // backend call
+        setNotes(res.data);
+      } catch (err) {
+        console.error("Error fetching notes:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchNotes();
+  }, []);
 
   // Filter notes safely
-  const filteredNotes = sampleNotes.filter((note) =>
+  const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-gray-900 px-4 py-6 text-gray-100">
-
-      {/* Glass Header */}
+      
+      {/* Header */}
       <div className="w-full max-w-3xl bg-gray-800/40 backdrop-blur-md border border-gray-700 rounded-xl p-6 mb-6 shadow-lg text-center">
         <h1 className="text-3xl font-bold mb-1 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
           📘 Notes Library
@@ -43,9 +53,12 @@ export default function NotesList() {
         />
       </div>
 
+      {/* Loading */}
+      {loading && <p className="text-gray-400">Loading notes...</p>}
+
       {/* Notes Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-        {filteredNotes.length === 0 && (
+        {!loading && filteredNotes.length === 0 && (
           <p className="text-gray-400 text-center col-span-full">No notes found</p>
         )}
 
@@ -58,7 +71,7 @@ export default function NotesList() {
                        cursor-pointer shadow-lg"
           >
             <h2 className="text-xl font-semibold mb-2 text-white">{note.title}</h2>
-            <p className="text-gray-300 text-sm">{note.desc}</p>
+            <p className="text-gray-300 text-sm">{note.content?.slice(0, 80)}...</p>
           </Link>
         ))}
       </div>

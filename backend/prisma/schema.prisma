@@ -1,36 +1,46 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-
-// User model to store user credentials
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  topics    Topic[] // A user can have multiple topics
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  password String
+  role     String
+  notes    Note[]
+}
+
+model Note {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String
+  createdBy Int?
+  author    User?   @relation(fields: [createdBy], references: [id])
+
   createdAt DateTime @default(now())
 }
 
-// Topic model to store study topics
-model Topic {
-  id        Int      @id @default(autoincrement())
+
+model Quiz {
+  id        Int       @id @default(autoincrement())
   title     String
-  notes     String?
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  questions Question[]
+}
+
+model Question {
+  id       Int    @id @default(autoincrement())
+  text     String
+  optionA  String
+  optionB  String
+  optionC  String
+  optionD  String
+  correct  String
+  quizId   Int
+  quiz     Quiz   @relation(fields: [quizId], references: [id])
 }
