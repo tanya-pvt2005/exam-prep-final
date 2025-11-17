@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const secret = process.env.JWT_SECRET || "4cf813c59d0108814c0596e9ef78033d5bb514d2642a64e66ca61a7b17344f3f";
+const secret = process.env.JWT_SECRET || "";
 
 export default function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
