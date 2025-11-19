@@ -18,43 +18,103 @@ const ManageNotes = () => {
     setNewNote({ ...newNote, [e.target.name]: e.target.value });
 
   // Add or Update note
-  const handleSave = async () => {
-    if (!newNote.title || !newNote.content) return alert("All fields required");
+  // const handleSave = async () => {
+  //   if (!newNote.title || !newNote.content) return alert("All fields required");
 
-    try {
-      if (editId) {
-        // Update existing note
-        const res = await axios.put(`/api/notes/${editId}`, newNote);
-        setNotes(notes.map(n => (n.id === editId ? res.data : n)));
-        setEditId(null);
-      } else {
-        // Create new note
-        const res = await axios.post("/api/notes", newNote);
-        setNotes([...notes, res.data]);
+  //   try {
+  //     if (editId) {
+  //       // Update existing note
+  //       const res = await axios.put(`/api/notes/${editId}`, newNote);
+  //       setNotes(notes.map(n => (n.id === editId ? res.data : n)));
+  //       setEditId(null);
+  //     } else {
+  //       // Create new note
+  //       const res = await axios.post("/api/notes", newNote);
+  //       setNotes([...notes, res.data]);
+  //     }
+
+  //     setNewNote({ title: "", content: "" });
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Failed");
+  //   }
+  // };
+
+  // // Delete
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await axios.delete(`/api/notes/${id}`);
+  //     setNotes(notes.filter(n => n.id !== id));
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  // // Edit
+  // const handleEdit = (note) => {
+  //   setNewNote({ title: note.title, content: note.content });
+  //   setEditId(note.id);
+  // };
+// Add or Update note
+const handleSave = async () => {
+  if (!newNote.title || !newNote.content) return alert("All fields required");
+
+  try {
+    if (editId) {
+      const res = await axios.put(
+        `http://localhost:5000/notes/${editId}`,
+        newNote,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setNotes(notes.map(n => (n.id === editId ? res.data : n)));
+      setEditId(null);
+
+    } else {
+      const res = await axios.post(
+        "http://localhost:5000/notes",
+        newNote,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setNotes([...notes, res.data]);
+    }
+
+    setNewNote({ title: "", content: "" });
+
+  } catch (err) {
+    console.error(err);
+    alert("Admin only permission required");
+  }
+};
+
+// Delete
+const handleDelete = async (id) => {
+  try {
+    await axios.delete(
+      `http://localhost:5000/notes/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
+    );
 
-      setNewNote({ title: "", content: "" });
-    } catch (err) {
-      console.error(err);
-      alert("Failed");
-    }
-  };
+    setNotes(notes.filter(n => n.id !== id));
 
-  // Delete
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`/api/notes/${id}`);
-      setNotes(notes.filter(n => n.id !== id));
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Edit
-  const handleEdit = (note) => {
-    setNewNote({ title: note.title, content: note.content });
-    setEditId(note.id);
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Admin only permission required");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-900 text-white px-6 py-6 flex flex-col gap-6">

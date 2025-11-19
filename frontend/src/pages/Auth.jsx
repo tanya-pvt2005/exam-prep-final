@@ -19,34 +19,55 @@ const Auth = () => {
   const submit = async (e) => {
     e.preventDefault();
     try {
+      let res;
+
+      // USER LOGIN
       if (mode === "login") {
-        await axios.post("/api/auth/login", {
+        res = await axios.post("/api/auth/login", {
           email: form.email,
           password: form.password,
         });
+
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("role", res.data.user.role);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+
         toast.success("Logged in!");
         navigate("/notes");
       }
 
+      // USER REGISTER
       if (mode === "register") {
-        await axios.post("/api/auth/register", {
+        res = await axios.post("/api/auth/register", {
           name: form.name,
           email: form.email,
           password: form.password,
         });
+
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("role", res.data.user.role);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+
         toast.success("Account created!");
         navigate("/notes");
       }
 
+      // ADMIN LOGIN
       if (mode === "admin") {
-        await axios.post("/api/auth/admin", {
+        res = await axios.post("/api/auth/admin", {
           email: form.email,
           password: form.password,
           adminKey: form.adminKey,
         });
+
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("role", res.data.user.role); 
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+
         toast.success("Admin logged in!");
         navigate("/admin");
       }
+
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
@@ -56,28 +77,22 @@ const Auth = () => {
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-900 px-4">
       <div className="w-full max-w-md p-8 rounded-3xl shadow-xl border border-white/20 bg-gray-800/40 backdrop-blur-2xl transition-all">
 
-        {/* Title */}
         <h1 className="text-center text-4xl font-extrabold mb-6
                        bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400
-                       bg-clip-text text-transparent drop-shadow-md">
+                       bg-clip-text text-transparent">
           {mode === "login" && "Welcome Back"}
           {mode === "register" && "Create Account"}
           {mode === "admin" && "Admin Login"}
         </h1>
 
-        {/* Tabs */}
         <div className="flex bg-gray-700/30 rounded-xl gap-5 p-1 shadow-inner mb-6">
           {["login", "register", "admin"].map((tab) => (
             <button
               key={tab}
               onClick={() => setMode(tab)}
-              className={`flex-1 py-2 rounded-lg transition-all text-sm font-semibold cursor-pointer
-                ${
-                  mode === tab
-                    ? "bg-blue-500 text-white shadow-md"
-                    : "text-gray-300 hover:bg-gray-700/50"
-                }
-              `}
+              className={`flex-1 py-2 rounded-lg transition-all text-sm font-semibold
+              ${mode === tab ? "bg-blue-500 text-white" : "text-gray-300 hover:bg-gray-700/50"}
+            `}
             >
               {tab === "login" && "Login"}
               {tab === "register" && "Register"}
@@ -86,7 +101,6 @@ const Auth = () => {
           ))}
         </div>
 
-        {/* Form */}
         <form className="space-y-4">
           {mode === "register" && (
             <input
@@ -95,10 +109,7 @@ const Auth = () => {
               placeholder="Full Name"
               value={form.name}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-white/30 rounded-xl
-                         bg-gray-700/40 text-white placeholder-gray-300
-                         backdrop-blur-md shadow-sm focus:ring-2 focus:ring-blue-400
-                         outline-none transition-all"
+              className="input-box"
             />
           )}
 
@@ -108,10 +119,7 @@ const Auth = () => {
             placeholder="Email Address"
             value={form.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-white/30 rounded-xl
-                       bg-gray-700/40 text-white placeholder-gray-300
-                       backdrop-blur-md shadow-sm focus:ring-2 focus:ring-blue-400
-                       outline-none transition-all"
+            className="input-box"
           />
 
           <input
@@ -120,10 +128,7 @@ const Auth = () => {
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-white/30 rounded-xl
-                       bg-gray-700/40 text-white placeholder-gray-300
-                       backdrop-blur-md shadow-sm focus:ring-2 focus:ring-blue-400
-                       outline-none transition-all"
+            className="input-box"
           />
 
           {mode === "admin" && (
@@ -133,19 +138,13 @@ const Auth = () => {
               placeholder="Admin Secret Key"
               value={form.adminKey}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-white/30 rounded-xl
-                         bg-gray-700/40 text-white placeholder-gray-300
-                         backdrop-blur-md shadow-sm focus:ring-2 focus:ring-blue-400
-                         outline-none transition-all"
+              className="input-box"
             />
           )}
 
-          {/* Submit Button */}
           <button
             onClick={submit}
-            className="w-full mt-4 py-3 bg-blue-500 text-white font-semibold rounded-xl
-                       shadow-md hover:bg-blue-600 hover:shadow-lg active:scale-95
-                       transition-all cursor-pointer"
+            className="btn-primary"
           >
             {mode === "login" && "Login"}
             {mode === "register" && "Create Account"}

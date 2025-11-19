@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function QuizList() {
   const [query, setQuery] = useState("");
+  const [quizzes, setQuizzes] = useState([]);
 
-  const quizzes = [
-    { id: 1, title: "Networking Basics" },
-    { id: 2, title: "Database Fundamentals" },
-    { id: 3, title: "Operating Systems" },
-    { id: 4, title: "Web Development" },
-  ];
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/quizzes")
+      .then(res => setQuizzes(res.data))
+      .catch(err => console.error("Quiz fetch error:", err));
+  }, []);
 
-  const filtered = quizzes.filter(q => q.title.toLowerCase().includes(query.toLowerCase()));
+  const filtered = quizzes.filter(q =>
+    q.title.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 px-4 py-6 flex flex-col items-center gap-6">
@@ -32,7 +35,9 @@ export default function QuizList() {
       />
 
       <div className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-        {filtered.length === 0 && <p className="text-gray-400 text-center col-span-full">No quizzes found</p>}
+        {filtered.length === 0 && (
+          <p className="text-gray-400 text-center col-span-full">No quizzes found</p>
+        )}
 
         {filtered.map(q => (
           <Link

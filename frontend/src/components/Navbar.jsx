@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom";
+const role = localStorage.getItem("role");
 
 const Navbar = () => {
   return (
@@ -15,7 +16,14 @@ const Navbar = () => {
           <Link className="hover:text-blue-600" to="/notes">Notes</Link>
           <Link className="hover:text-blue-600" to="/quiz">Quiz</Link>
           <Link className="hover:text-blue-600" to="/chat">Chat</Link>
-          <Link className="hover:text-blue-600" to="/admin">Admin</Link>
+          {role === "admin" && (
+  <Link to="/admin" className="text-white hover:text-blue-400">
+    Admin
+  </Link>
+)}
+
+
+
           <Link
             to="/auth"
             className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700"

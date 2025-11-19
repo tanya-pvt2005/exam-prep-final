@@ -1,8 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ParticlesBg from 'particles-bg'
-import MouseParticles from 'react-mouse-particles'
+
+import MouseParticles from "react-mouse-particles";
+import PrivateAdminRoute from "./components/PrivateAdminRoute";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -19,9 +20,10 @@ import QuizResult from "./pages/QuizResult";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ManageNotes from "./pages/Admin/ManageNotes";
 import ManageQuizzes from "./pages/Admin/ManageQuizzes";
+import ManageUsers from "./pages/Admin/ManageUsers";
+import AdminSettings from "./pages/Admin/AdminSettings";
 
 export default function App() {
-
   const cobwebConfig = {
     num: 80, // number of particles
     rps: 0.02, // rotation speed
@@ -48,16 +50,24 @@ export default function App() {
     },
   };
   return (
-    <div
-      className="min-h-screen flex flex-col bg-gray-900" 
-    >
-        <MouseParticles g={10} v = {0.7} radius ={10} alpha = {0.4} color="random" cull="col,image-wrapper"/>
-       
+    <div className="min-h-screen flex flex-col bg-gray-900">
+
+      {/* Fancy mouse trail */}
+      <MouseParticles
+        g={10}
+        v={0.7}
+        radius={10}
+        alpha={0.4}
+        color="random"
+        cull="col,image-wrapper"
+      />
+
       <Navbar />
 
-
-      <main className="flex-1 container mx-auto px-4 py-6">
+      {/* Main Page Content */}
+      <main className="flex-1">
         <Routes>
+          {/* Public Routes */}
           <Route path="/auth" element={<Auth />} />
 
           <Route path="/notes" element={<NotesList />} />
@@ -69,10 +79,53 @@ export default function App() {
           <Route path="/quiz/:id" element={<QuizPage />} />
           <Route path="/quiz/:id/result" element={<QuizResult />} />
 
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/notes" element={<ManageNotes />} />
-          <Route path="/admin/quizzes" element={<ManageQuizzes />} />
+          {/* Admin Protected Routes */}
+          <Route
+            path="/admin"
+            element={
+              <PrivateAdminRoute>
+                <AdminDashboard />
+              </PrivateAdminRoute>
+            }
+          />
 
+          <Route
+            path="/admin/manage-notes"
+            element={
+              <PrivateAdminRoute>
+                <ManageNotes />
+              </PrivateAdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/manage-quizzes"
+            element={
+              <PrivateAdminRoute>
+                <ManageQuizzes />
+              </PrivateAdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/users"
+            element={
+              <PrivateAdminRoute>
+                <ManageUsers />
+              </PrivateAdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/settings"
+            element={
+              <PrivateAdminRoute>
+                <AdminSettings />
+              </PrivateAdminRoute>
+            }
+          />
+
+          {/* Default Route */}
           <Route path="*" element={<Auth />} />
         </Routes>
       </main>
@@ -80,7 +133,5 @@ export default function App() {
       <Footer />
       <ToastContainer position="top-right" />
     </div>
-
   );
 }
-<Route path="/admin/manage-notes" element={<ManageNotes />} />
