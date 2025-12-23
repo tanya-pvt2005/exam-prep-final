@@ -1,6 +1,7 @@
 import express from "express";
 // import auth from "../middleware/authMiddleware.js";
 // import admin from "../middleware/adminMiddleware.js";
+
 import {
   generateSummary,
   getAll,
@@ -22,6 +23,7 @@ router.get("/", getAll);
 router.get("/:id", getOne);
 
 // Admin: Create note
+
 router.post("/",  create);
 
 // Admin: Update note
@@ -29,5 +31,7 @@ router.put("/:id",  update);
 
 // Admin: Delete note
 router.delete("/:id",  remove);
+
+
 
 export default router;

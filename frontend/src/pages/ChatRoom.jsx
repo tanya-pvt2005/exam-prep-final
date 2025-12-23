@@ -23,7 +23,7 @@ export default function ChatRoom() {
         const msg = JSON.parse(event.data);
         setMessages((prev) => [...prev, msg]);
       } catch (error) {
-        console.log("Invalid message:", event.data);
+        console.log("Invalid message:", error);
       }
     };
 
