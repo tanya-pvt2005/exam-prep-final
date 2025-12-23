@@ -27,21 +27,11 @@ export default function ChatRoom() {
     };
 
     ws.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      // User receives admin reply
-      if (role === "user" && data.type === "admin-reply") {
-        setMessages(prev => [...prev, { user: data.from, text: data.message }]);
-      }
-
-      // Admin receives user messages
-      if (role === "admin") {
-        if (data.type === "user-message") {
-          setMessages(prev => [...prev, { user: data.username, text: data.message, userId: data.userId }]);
-        }
-        if (data.type === "user-list") {
-          setUsersList(data.users);
-        }
+      try {
+        const msg = JSON.parse(event.data);
+        setMessages((prev) => [...prev, msg]);
+      } catch (error) {
+        console.log("Invalid message:", error);
       }
     };
 
@@ -89,13 +79,14 @@ export default function ChatRoom() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
         <div className="bg-gray-800 p-6 rounded-lg flex flex-col gap-4">
-          <h1 className="text-white text-xl font-bold">Enter username</h1>
+          <h1 className="text-white  text-xl font-bold">Enter username</h1>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            className="px-3 py-2 bg-gray-200 rounded-md outline-none"
             placeholder="Username..."
-            className="px-3 py-2 rounded-md outline-none"
+       
           />
           <div className="flex gap-4 mt-2">
             <button

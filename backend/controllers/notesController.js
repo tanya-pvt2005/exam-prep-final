@@ -125,7 +125,7 @@ export const create = async (req, res) => {
     data: {
       title,
       content,
-      userId: req.user?.id || null,
+      createdBy: req.user?.id || null,
     },
   });
 

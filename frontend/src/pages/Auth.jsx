@@ -1,5 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
+
+import api from "../api/axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +24,7 @@ const Auth = () => {
 
       // USER LOGIN
       if (mode === "login") {
-        res = await axios.post("/api/auth/login", {
+        res = await api.post("/auth/login", {
           email: form.email,
           password: form.password,
         });
@@ -38,7 +39,7 @@ const Auth = () => {
 
       // USER REGISTER
       if (mode === "register") {
-        res = await axios.post("/api/auth/register", {
+        res = await api.post("/auth/register", {
           name: form.name,
           email: form.email,
           password: form.password,
@@ -54,7 +55,7 @@ const Auth = () => {
 
       // ADMIN LOGIN
       if (mode === "admin") {
-        res = await axios.post("/api/auth/admin", {
+        res = await api.post("/auth/admin", {
           email: form.email,
           password: form.password,
           adminKey: form.adminKey,

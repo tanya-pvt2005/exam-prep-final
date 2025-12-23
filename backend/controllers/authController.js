@@ -86,6 +86,7 @@ export const login = async (req, res) => {
 
 // ====================== ADMIN LOGIN ======================
 export const adminLogin = async (req, res) => {
+  // console.log("AUTH HEADER:", req.headers.authorization);
   try {
     const { email, password, adminKey } = req.body;
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import api from "../../api/axios";
 import { FiEdit, FiTrash2, FiPlus } from "react-icons/fi";
 
 const ManageNotes = () => {
@@ -7,118 +7,66 @@ const ManageNotes = () => {
   const [newNote, setNewNote] = useState({ title: "", content: "" });
   const [editId, setEditId] = useState(null);
 
-  // Fetch notes from backend
+  // Fetch notes
   useEffect(() => {
-    axios.get("/api/notes")
+    api.get("/notes")
       .then(res => setNotes(res.data))
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        alert(err?.response?.data?.message || "Failed to load notes");
+      });
   }, []);
 
-  const handleChange = (e) =>
+  const handleChange = (e) => {
     setNewNote({ ...newNote, [e.target.name]: e.target.value });
+  };
 
-  // Add or Update note
-  // const handleSave = async () => {
-  //   if (!newNote.title || !newNote.content) return alert("All fields required");
-
-  //   try {
-  //     if (editId) {
-  //       // Update existing note
-  //       const res = await axios.put(`/api/notes/${editId}`, newNote);
-  //       setNotes(notes.map(n => (n.id === editId ? res.data : n)));
-  //       setEditId(null);
-  //     } else {
-  //       // Create new note
-  //       const res = await axios.post("/api/notes", newNote);
-  //       setNotes([...notes, res.data]);
-  //     }
-
-  //     setNewNote({ title: "", content: "" });
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Failed");
-  //   }
-  // };
-
-  // // Delete
-  // const handleDelete = async (id) => {
-  //   try {
-  //     await axios.delete(`/api/notes/${id}`);
-  //     setNotes(notes.filter(n => n.id !== id));
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
-  // // Edit
-  // const handleEdit = (note) => {
-  //   setNewNote({ title: note.title, content: note.content });
-  //   setEditId(note.id);
-  // };
-// Add or Update note
-const handleSave = async () => {
-  if (!newNote.title || !newNote.content) return alert("All fields required");
-
-  try {
-    if (editId) {
-      const res = await axios.put(
-        `http://localhost:5000/notes/${editId}`,
-        newNote,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      setNotes(notes.map(n => (n.id === editId ? res.data : n)));
-      setEditId(null);
-
-    } else {
-      const res = await axios.post(
-        "http://localhost:5000/notes",
-        newNote,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      setNotes([...notes, res.data]);
+  // Create or Update note
+  const handleSave = async () => {
+    if (!newNote.title || !newNote.content) {
+      return alert("All fields are required");
     }
 
-    setNewNote({ title: "", content: "" });
-
-  } catch (err) {
-    console.error(err);
-    alert("Admin only permission required");
-  }
-};
-
-// Delete
-const handleDelete = async (id) => {
-  try {
-    await axios.delete(
-      `http://localhost:5000/notes/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+    try {
+      if (editId) {
+        const res = await api.put(`/notes/${editId}`, newNote);
+        setNotes(notes.map(n => (n.id === editId ? res.data : n)));
+        setEditId(null);
+      } else {
+        const res = await api.post("/notes", newNote);
+        setNotes([...notes, res.data]);
       }
-    );
 
-    setNotes(notes.filter(n => n.id !== id));
+      setNewNote({ title: "", content: "" });
+    } catch (err) {
+      console.error(err);
+      alert(err?.response?.data?.message || "Action failed");
+    }
+  };
 
-  } catch (err) {
-    console.error(err);
-    alert("Admin only permission required");
-  }
-};
+  // Delete note (admin only)
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this note?")) return;
+
+    try {
+      await api.delete(`/notes/${id}`);
+      setNotes(notes.filter(n => n.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert(err?.response?.data?.message || "Delete failed");
+    }
+  };
+
+  // Edit note
+  const handleEdit = (note) => {
+    setNewNote({ title: note.title, content: note.content });
+    setEditId(note.id);
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white px-6 py-6 flex flex-col gap-6">
 
+      {/* Header */}
       <div className="w-full max-w-6xl mx-auto bg-gray-800/40 backdrop-blur-md border 
         border-gray-700 rounded-2xl p-6 shadow-lg text-center">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 
@@ -173,16 +121,16 @@ const handleDelete = async (id) => {
             <div className="flex gap-2 mt-2">
               <button
                 onClick={() => handleEdit(note)}
-                className="flex-1 px-2 py-1 bg-yellow-500 hover:bg-yellow-600 rounded-xl flex 
-                items-center justify-center gap-1"
+                className="flex-1 px-2 py-1 bg-yellow-500 hover:bg-yellow-600 rounded-xl 
+                flex items-center justify-center gap-1"
               >
                 <FiEdit /> Edit
               </button>
 
               <button
                 onClick={() => handleDelete(note.id)}
-                className="flex-1 px-2 py-1 bg-red-500 hover:bg-red-600 rounded-xl flex 
-                items-center justify-center gap-1"
+                className="flex-1 px-2 py-1 bg-red-500 hover:bg-red-600 rounded-xl 
+                flex items-center justify-center gap-1"
               >
                 <FiTrash2 /> Delete
               </button>
@@ -191,7 +139,6 @@ const handleDelete = async (id) => {
           </div>
         ))}
       </div>
-
     </div>
   );
 };
