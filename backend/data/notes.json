@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "title": "Networking Basics",
+    "content": "OSI Model, TCP/IP layers, routing and switching basics."
+  },
+  {
+    "id": 2,
+    "title": "Database Normalization",
+    "content": "1NF, 2NF, 3NF, BCNF concepts and examples."
+  },
+  {
+    "id": 3,
+    "title": "Operating Systems",
+    "content": "Processes, threads, CPU scheduling & memory management."
+  }
+]

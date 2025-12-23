@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1763305915045,
+    "name": "Test",
+    "email": "test@gmail.com",
+    "password": "$2b$10$UgDbp9AdbiDODwJbwdCl6uQzP0cYHjyvd.K1ZDoljUavKcviTOH9a",
+    "role": "user"
+  },
+  {
+    "id": 1763306755708,
+    "name": "Shruti",
+    "email": "shrutigulati34@gmail.com",
+    "password": "$2b$10$S155EU1hnXfe5RipRzyUNONV1koXX.tt8GAtxa1Y6waX6kUPUBss.",
+    "role": "user"
+  }
+]
